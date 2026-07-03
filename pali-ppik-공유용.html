@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>빠알리어 빨리 익히기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #14171f; color: #f2e9d8; font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px;
+  }
+  .app { width: 100%; max-width: 560px; }
+  .header { margin-bottom: 20px; }
+  .title-row { display: flex; align-items: center; gap: 10px; }
+  .back-btn {
+    background: transparent; border: 0.5px solid rgba(242,233,216,0.18); color: #8f8672;
+    width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .back-btn:hover { border-color: rgba(242,233,216,0.4); color: #f2e9d8; }
+  .header h1 { font-family: 'Noto Serif KR', serif; font-weight: 600; font-size: 20px; }
+  .header p { font-size: 12px; color: #8f8672; margin-top: 6px; }
+  .source-tag { font-size: 11px; color: #5a5648; margin-top: 4px; }
+
+  .home-tracks { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+  .track-card {
+    background: #1c2029; border: 0.5px solid rgba(242,233,216,0.14); border-radius: 4px;
+    padding: 22px 24px; cursor: pointer; transition: border-color 0.15s ease;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .track-card:hover { border-color: rgba(201,138,62,0.5); }
+  .track-num {
+    font-family: 'EB Garamond', serif; font-style: italic; font-size: 26px; color: #c98a3e;
+    width: 34px; text-align: center; flex-shrink: 0;
+  }
+  .track-info { flex: 1; }
+  .track-name { font-family: 'Noto Serif KR', serif; font-weight: 600; font-size: 16px; margin-bottom: 5px; }
+  .track-desc { font-size: 12px; color: #8f8672; line-height: 1.6; }
+  .track-flow { font-size: 11px; color: #c98a3e; margin-top: 7px; }
+  .track-stat { font-size: 11px; color: #7c9885; text-align: right; white-space: nowrap; }
+
+  .mode-switch { display: flex; gap: 6px; margin-bottom: 16px; }
+  .mode-btn {
+    flex: 1; font-size: 12px; padding: 9px 4px; text-align: center; border-radius: 20px;
+    border: 0.5px solid rgba(242,233,216,0.14); color: #8f8672; background: transparent; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .mode-btn.active { border-color: #7c9885; color: #7c9885; background: rgba(124,152,133,0.08); }
+
+  .leaf-thread { display: flex; align-items: center; gap: 8px; margin: 16px 0 18px; }
+  .leaf-thread::before, .leaf-thread::after { content: ''; flex: 1; height: 1px; background: rgba(242,233,216,0.15); }
+  .leaf-thread .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(201,138,62,0.5); }
+
+  .card {
+    background: #1c2029; border: 0.5px solid rgba(242,233,216,0.14); border-radius: 4px;
+    padding: 30px 26px; margin-bottom: 16px; min-height: 180px;
+  }
+  .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #8f8672; margin-bottom: 16px; }
+  .pos-tag {
+    display: inline-block; font-size: 11px; color: #c98a3e; background: rgba(201,138,62,0.08);
+    padding: 2px 9px; border-radius: 10px; margin-bottom: 12px;
+  }
+  .lemma { font-family: 'EB Garamond', serif; font-style: italic; font-size: 34px; text-align: center; margin-bottom: 6px; }
+  .meaning-reveal { text-align: center; font-family: 'Noto Serif KR', serif; font-size: 20px; color: #c98a3e; min-height: 30px; margin-top: 12px; }
+  .tap-hint { text-align: center; font-size: 11px; color: #5a5648; margin-top: 16px; }
+
+  .forms-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .forms-table td { padding: 9px 4px; font-size: 14px; border-bottom: 0.5px solid rgba(242,233,216,0.08); }
+  .forms-table tr:last-child td { border-bottom: none; }
+  .forms-table .f-surface { font-family: 'EB Garamond', serif; font-style: italic; font-size: 17px; }
+  .forms-table .f-gram { color: #c98a3e; font-size: 12px; }
+  .forms-table .f-meaning { color: #b3ab99; font-size: 13px; text-align: right; }
+
+  .pali-sentence { font-family: 'EB Garamond', serif; font-style: italic; font-size: 23px; line-height: 1.9; }
+  .word { cursor: pointer; border-bottom: 1px dotted rgba(242,233,216,0.3); padding: 2px 1px; }
+  .word:hover { color: #c98a3e; }
+  .word.active { color: #c98a3e; border-bottom: 1px solid #c98a3e; }
+  .blank-slot { color: #c98a3e; border-bottom: 1px solid #c98a3e; padding: 2px 6px; }
+  .detail-panel { margin-top: 20px; padding-top: 16px; border-top: 0.5px solid rgba(242,233,216,0.12); min-height: 56px; }
+  .detail-empty { font-size: 12px; color: #5a5648; }
+  .detail-row { display: flex; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+  .detail-label { font-size: 11px; color: #5a5648; min-width: 44px; }
+  .detail-lemma { font-family: 'EB Garamond', serif; font-style: italic; font-size: 16px; }
+  .detail-gram { font-size: 12px; color: #c98a3e; background: rgba(201,138,62,0.08); padding: 2px 8px; border-radius: 10px; }
+  .detail-meaning { font-size: 13px; color: #b3ab99; }
+  .translation-toggle { margin-top: 14px; font-size: 12px; color: #8f8672; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .translation-text { display: none; margin-top: 10px; font-size: 14px; color: #b3ab99; font-family: 'Noto Serif KR', serif; }
+  .translation-text.show { display: block; }
+  .korean-prompt { font-family: 'Noto Serif KR', serif; font-size: 16px; color: #b3ab99; margin-bottom: 18px; line-height: 1.7; }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .options.single-col { grid-template-columns: 1fr; }
+  .option-btn {
+    font-size: 13px; background: #1c2029; border: 0.5px solid rgba(242,233,216,0.18); color: #f2e9d8;
+    padding: 12px 10px; border-radius: 4px; cursor: pointer; text-align: center; line-height: 1.5;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .option-btn.pali-opt { font-family: 'EB Garamond', serif; font-style: italic; font-size: 16px; }
+  .option-btn:hover:not(:disabled) { border-color: rgba(242,233,216,0.4); }
+  .option-btn:disabled { cursor: default; }
+  .option-btn.correct { border-color: #7c9885; background: rgba(124,152,133,0.12); color: #a8c2ae; }
+  .option-btn.wrong { border-color: #b56255; background: rgba(181,98,85,0.1); color: #cf988c; }
+  .quiz-question { font-size: 13px; color: #b3ab99; line-height: 1.7; }
+  .quiz-question b { color: #f2e9d8; font-weight: 500; }
+  .quiz-explain {
+    display: none; margin-top: 14px; font-size: 13px; color: #b3ab99; line-height: 1.7;
+    background: rgba(201,138,62,0.06); border-left: 2px solid #c98a3e; padding: 10px 14px;
+  }
+  .quiz-explain.show { display: block; }
+  .quiz-explain b { color: #c98a3e; font-weight: 500; }
+
+  .controls { display: flex; align-items: center; justify-content: space-between; }
+  .nav-btn {
+    background: transparent; border: 0.5px solid rgba(242,233,216,0.18); color: #f2e9d8;
+    padding: 9px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .progress { font-size: 12px; color: #8f8672; font-variant-numeric: tabular-nums; }
+  .known-btn {
+    background: transparent; border: 0.5px solid rgba(124,152,133,0.4); color: #7c9885;
+    font-size: 12px; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .known-btn.marked { background: rgba(124,152,133,0.14); border-color: #7c9885; }
+  .footer-stat { text-align: center; margin-top: 20px; font-size: 12px; color: #5a5648; }
+  .footer-stat span { color: #7c9885; }
+  .loading { text-align: center; padding: 60px 0; color: #8f8672; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="loading">불러오는 중…</div></div>
+
+<script>
+const sentences = [
+  { pali:"tathāgato bhāsati", translation:"여래께서는 말씀하신다.", words:[
+    {surface:"tathāgato", lemma:"tathāgata", gram:"N.Sg.m.", meaning:"여래께서는"},
+    {surface:"bhāsati", lemma:"bhāsati", gram:"3.Sg.Pres.", meaning:"말씀하신다"}
+  ]},
+  { pali:"mahāmatto nisīdati", translation:"대신은 앉는다.", words:[
+    {surface:"mahāmatto", lemma:"mahāmatta", gram:"N.Sg.m.", meaning:"대신은"},
+    {surface:"nisīdati", lemma:"nisīdati", gram:"3.Sg.Pres.", meaning:"앉는다"}
+  ]},
+  { pali:"upāsako pucchati", translation:"남자신도는 묻는다.", words:[
+    {surface:"upāsako", lemma:"upāsaka", gram:"N.Sg.m.", meaning:"남자신도, 우바새는"},
+    {surface:"pucchati", lemma:"pucchati", gram:"3.Sg.Pres.", meaning:"묻는다"}
+  ]},
+  { pali:"samaṇo tathāgato hoti", translation:"그 사문은 여래이다.", words:[
+    {surface:"samaṇo", lemma:"samaṇa", gram:"N.Sg.m.", meaning:"사문은"},
+    {surface:"tathāgato", lemma:"tathāgata", gram:"N.Sg.m.", meaning:"여래가"},
+    {surface:"hoti", lemma:"bhavati", gram:"3.Sg.Pres.", meaning:"이다, 되다"}
+  ]},
+  { pali:"puriso evaṃ vadati", translation:"사람은 이와 같이 말한다.", words:[
+    {surface:"puriso", lemma:"purisa", gram:"N.Sg.m.", meaning:"사람은"},
+    {surface:"evaṃ", lemma:"evaṃ", gram:"avv.", meaning:"이와 같이"},
+    {surface:"vadati", lemma:"vadati", gram:"3.Sg.Pres.", meaning:"말한다"}
+  ]},
+  { pali:"putto upāsako passati", translation:"남자신도인 아들은 본다.", words:[
+    {surface:"putto", lemma:"putta", gram:"N.Sg.m.", meaning:"아들은"},
+    {surface:"upāsako", lemma:"upāsaka", gram:"N.Sg.m.", meaning:"남자신도는"},
+    {surface:"passati", lemma:"passati", gram:"3.Sg.Pres.", meaning:"본다"}
+  ]},
+  { pali:"devo amanusso hoti", translation:"신은 인간이 아니다.", words:[
+    {surface:"devo", lemma:"deva", gram:"N.Sg.m.", meaning:"신은"},
+    {surface:"amanusso", lemma:"amanussa", gram:"N.Sg.m.", meaning:"비인간이 (a-부정+manussa)"},
+    {surface:"hoti", lemma:"bhavati", gram:"3.Sg.Pres.", meaning:"이다"}
+  ]},
+  { pali:"brāhmaṇo upasaṃkamati", translation:"바라문은 다가간다.", words:[
+    {surface:"brāhmaṇo", lemma:"brāhmaṇa", gram:"N.Sg.m.", meaning:"바라문이"},
+    {surface:"upasaṃkamati", lemma:"upasaṃkamati", gram:"3.Sg.Pres.", meaning:"다가간다"}
+  ]},
+  { pali:"evaṃ vadāmi", translation:"나는 이와 같이 말한다.", words:[
+    {surface:"evaṃ", lemma:"evaṃ", gram:"avv.", meaning:"이와 같이"},
+    {surface:"vadāmi", lemma:"vadati", gram:"1.Sg.Pres.", meaning:"말한다"}
+  ]},
+  { pali:"manusso jīvati", translation:"사람은 산다.", words:[
+    {surface:"manusso", lemma:"manussa", gram:"N.Sg.m.", meaning:"사람은"},
+    {surface:"jīvati", lemma:"jīvati", gram:"3.Sg.Pres.", meaning:"산다"}
+  ]},
+  { pali:"khattiyo pakkamati", translation:"크샤트리아는 나아간다.", words:[
+    {surface:"khattiyo", lemma:"khattiya", gram:"N.Sg.m.", meaning:"크샤트리아는"},
+    {surface:"pakkamati", lemma:"pakkamati", gram:"3.Sg.Pres.", meaning:"나아간다"}
+  ]},
+  { pali:"evaṃ vadanti", translation:"그들은 이와 같이 말한다.", words:[
+    {surface:"evaṃ", lemma:"evaṃ", gram:"avv.", meaning:"이와 같이"},
+    {surface:"vadanti", lemma:"vadati", gram:"3.Pl.Pres.", meaning:"말한다"}
+  ]},
+  { pali:"sugato dhammaṃ bhāsati", translation:"선서께서는 법을 설한다.", words:[
+    {surface:"sugato", lemma:"sugata", gram:"N.Sg.m.", meaning:"선서(善逝)께서는"},
+    {surface:"dhammaṃ", lemma:"dhamma", gram:"Ac.Sg.m.", meaning:"법을"},
+    {surface:"bhāsati", lemma:"bhāsati", gram:"3.Sg.Pres.", meaning:"말한다, 설한다"}
+  ]},
+  { pali:"brāhmaṇo purise pucchati", translation:"바라문은 사람들에게 묻는다.", words:[
+    {surface:"brāhmaṇo", lemma:"brāhmaṇa", gram:"N.Sg.m.", meaning:"바라문은"},
+    {surface:"purise", lemma:"purisa", gram:"Ac.Pl.m.", meaning:"사람들에게"},
+    {surface:"pucchati", lemma:"pucchati", gram:"3.Sg.Pres.", meaning:"묻는다"}
+  ]},
+  { pali:"upāsako pattaṃ āharati", translation:"남자신도는 발우를 가져다 준다.", words:[
+    {surface:"upāsako", lemma:"upāsaka", gram:"N.Sg.m.", meaning:"남자신도는"},
+    {surface:"pattaṃ", lemma:"patta", gram:"Ac.Sg.n.", meaning:"발우를"},
+    {surface:"āharati", lemma:"āharati", gram:"3.Sg.Pres.", meaning:"가져다 준다, 가져온다"}
+  ]},
+  { pali:"devā cavanti", translation:"신들은 유전(流轉)한다.", words:[
+    {surface:"devā", lemma:"deva", gram:"N.Pl.m.", meaning:"신들은"},
+    {surface:"cavanti", lemma:"cavati", gram:"3.Pl.Pres.", meaning:"유전한다, 죽는다"}
+  ]},
+  { pali:"manussā bhavaṃ icchanti", translation:"사람들은 존재를 원한다.", words:[
+    {surface:"manussā", lemma:"manussa", gram:"N.Pl.m.", meaning:"사람들은"},
+    {surface:"bhavaṃ", lemma:"bhava", gram:"Ac.Sg.m.", meaning:"행운, 존재를"},
+    {surface:"icchanti", lemma:"icchati", gram:"3.Pl.Pres.", meaning:"원한다, 바란다"}
+  ]},
+  { pali:"vādaṃ vadanti", translation:"말을 말한다.", words:[
+    {surface:"vādaṃ", lemma:"vāda", gram:"Ac.Sg.m.", meaning:"말을"},
+    {surface:"vadanti", lemma:"vadati", gram:"3.Pl.Pres.", meaning:"말한다"}
+  ]},
+  { pali:"gāmaṃ gacchāma", translation:"우리는 마을로 간다.", words:[
+    {surface:"gāmaṃ", lemma:"gāma", gram:"Ac.Sg.m.", meaning:"마을로"},
+    {surface:"gacchāma", lemma:"gacchati", gram:"1.Pl.Pres.", meaning:"간다"}
+  ]},
+  { pali:"puttā pabbajanti", translation:"아들들이 출가한다.", words:[
+    {surface:"puttā", lemma:"putta", gram:"N.Pl.m.", meaning:"아들들이"},
+    {surface:"pabbajanti", lemma:"pabbajati", gram:"3.Pl.Pres.", meaning:"출가한다"}
+  ]},
+  { pali:"samaṇo āgacchati", translation:"사문은 온다.", words:[
+    {surface:"samaṇo", lemma:"samaṇa", gram:"N.Sg.m.", meaning:"사문은"},
+    {surface:"āgacchati", lemma:"āgacchati", gram:"3.Sg.Pres.", meaning:"온다"}
+  ]},
+  { pali:"satto tiṭṭhati", translation:"중생은 존재한다.", words:[
+    {surface:"satto", lemma:"satta", gram:"N.Sg.m.", meaning:"중생은"},
+    {surface:"tiṭṭhati", lemma:"tiṭṭhati", gram:"3.Sg.Pres.", meaning:"존재한다, 서 있다"}
+  ]},
+  { pali:"tathāgato sugato hoti", translation:"여래는 선서이다.", words:[
+    {surface:"tathāgato", lemma:"tathāgata", gram:"N.Sg.m.", meaning:"여래는"},
+    {surface:"sugato", lemma:"sugata", gram:"N.Sg.m.", meaning:"선서, 잘 간 분이"},
+    {surface:"hoti", lemma:"bhavati", gram:"3.Sg.Pres.", meaning:"이다"}
+  ]},
+  { pali:"samaṇe atthaṃ pucchanti", translation:"사문들에게 의미를 묻는다.", words:[
+    {surface:"samaṇe", lemma:"samaṇa", gram:"Ac.Pl.m.", meaning:"사문들에게"},
+    {surface:"atthaṃ", lemma:"attha", gram:"Ac.Sg.m.", meaning:"의미를"},
+    {surface:"pucchanti", lemma:"pucchati", gram:"3.Pl.Pres.", meaning:"묻는다"}
+  ]},
+  { pali:"ahaṃ ime dhamme desesiṃ", translation:"나는 이 법들을 가르쳤다.", words:[
+    {surface:"ahaṃ", lemma:"ahaṃ", gram:"N.Sg.1.pron.", meaning:"나는"},
+    {surface:"ime", lemma:"ayaṃ/idaṃ", gram:"Ac.Pl.m.pron.", meaning:"이 (지시대명사)"},
+    {surface:"dhamme", lemma:"dhamma", gram:"Ac.Pl.m.", meaning:"법들을"},
+    {surface:"desesiṃ", lemma:"deseti", gram:"1.Sg.Aor.", meaning:"가르쳤다"}
+  ]},
+  { pali:"rājā khattiyo taṃ purisaṃ etad avoca", translation:"크샤트리아인 왕이 그 사람에게 이와 같이 말했다.", words:[
+    {surface:"rājā", lemma:"rājā/rājan", gram:"N.Sg.m.", meaning:"왕은"},
+    {surface:"khattiyo", lemma:"khattiya", gram:"N.Sg.m.", meaning:"크샤트리아는"},
+    {surface:"taṃ", lemma:"sa/ta", gram:"Ac.Sg.m.pron.", meaning:"그, 그를"},
+    {surface:"purisaṃ", lemma:"purisa", gram:"Ac.Sg.m.", meaning:"사람, 신하에게"},
+    {surface:"etad", lemma:"esa/eta", gram:"Ac.Sg.n.pron.", meaning:"이것을, 이와 같이"},
+    {surface:"avoca", lemma:"vakkhati", gram:"3.Sg.Aor.", meaning:"말했다"}
+  ]},
+  { pali:"mā samaṇaṃ upasaṃkami", translation:"사문에게 다가가지 마라.", words:[
+    {surface:"mā", lemma:"mā", gram:"avv.(금지)", meaning:"-하지 마라"},
+    {surface:"samaṇaṃ", lemma:"samaṇa", gram:"Ac.Sg.m.", meaning:"사문에게"},
+    {surface:"upasaṃkami", lemma:"upasaṃkamati", gram:"2/3.Sg.Aor.", meaning:"다가갔다"}
+  ]},
+  { pali:"ahaṃ purohito brāhmaṇo ahosiṃ", translation:"나는 사제인 바라문이었다.", words:[
+    {surface:"ahaṃ", lemma:"ahaṃ", gram:"N.Sg.1.pron.", meaning:"나는"},
+    {surface:"purohito", lemma:"purohita", gram:"N.Sg.m.", meaning:"사제가"},
+    {surface:"brāhmaṇo", lemma:"brāhmaṇa", gram:"N.Sg.m.", meaning:"바라문이"},
+    {surface:"ahosiṃ", lemma:"bhavati", gram:"1.Sg.Aor.", meaning:"있었다"}
+  ]},
+  { pali:"ahaṃ asmi brahmā issaro", translation:"나는 브라만 신이다.", words:[
+    {surface:"ahaṃ", lemma:"ahaṃ", gram:"N.Sg.1.pron.", meaning:"나는"},
+    {surface:"asmi", lemma:"atthi", gram:"1.Sg.Pres.", meaning:"이다"},
+    {surface:"brahmā", lemma:"brahman", gram:"N.Sg.m.", meaning:"브라만이"},
+    {surface:"issaro", lemma:"issara", gram:"N.Sg.m.", meaning:"신, 주재자, 군주가"}
+  ]},
+  { pali:"idaṃ avoca bhagavā", translation:"세존께서는 이것을 말씀하셨다.", words:[
+    {surface:"idaṃ", lemma:"ayaṃ/idaṃ", gram:"Ac.Sg.n.pron.", meaning:"이것을, 이와 같이"},
+    {surface:"avoca", lemma:"vakkhati", gram:"3.Sg.Aor.", meaning:"말했다"},
+    {surface:"bhagavā", lemma:"bhagavant", gram:"N.Sg.m.", meaning:"세존께서는"}
+  ]},
+  { pali:"te rājaputtaṃ avocuṃ", translation:"그들은 왕의 아들에게 말했다.", words:[
+    {surface:"te", lemma:"sa/ta", gram:"N.Pl.m.pron.", meaning:"그들은"},
+    {surface:"rājaputtaṃ", lemma:"rājaputta", gram:"Ac.Sg.m.", meaning:"왕의 아들에게 (복합어: rāja+putta)"},
+    {surface:"avocuṃ", lemma:"vakkhati", gram:"3.Pl.Aor.", meaning:"말했다"}
+  ]},
+  { pali:"mā saddam akattha", translation:"너희는 소리를 내지 마라.", words:[
+    {surface:"mā", lemma:"mā", gram:"avv.(금지)", meaning:"-하지 마라"},
+    {surface:"saddam", lemma:"sadda", gram:"Ac.Sg.m.", meaning:"시끄러운 소리, 소리를"},
+    {surface:"akattha", lemma:"karoti", gram:"2.Pl.Aor.", meaning:"만들었다, 했다"}
+  ]},
+  { pali:"so nirodhaṃ phusati", translation:"그는 열반을 성취한다.", words:[
+    {surface:"so", lemma:"sa/ta", gram:"N.Sg.m.pron.", meaning:"그는"},
+    {surface:"nirodhaṃ", lemma:"nirodha", gram:"Ac.Sg.m.", meaning:"열반에, 열반을"},
+    {surface:"phusati", lemma:"phusati", gram:"3.Sg.Pres.", meaning:"접촉한다, 성취한다"}
+  ]},
+  { pali:"samaṇā amha", translation:"우리는 사문들이다.", words:[
+    {surface:"samaṇā", lemma:"samaṇa", gram:"N.Pl.m.", meaning:"사문들이"},
+    {surface:"amha", lemma:"atthi", gram:"1.Pl.Pres.", meaning:"이다"}
+  ]},
+  { pali:"na taṃ deva vañcemi", translation:"왕이시여, 저는 그대를 속이지 않습니다.", words:[
+    {surface:"na", lemma:"na", gram:"avv.(부정)", meaning:"하지 않다"},
+    {surface:"taṃ", lemma:"tvaṃ", gram:"Ac.Sg.2.pron.", meaning:"너, 그대, 그를"},
+    {surface:"deva", lemma:"deva", gram:"V.Sg.m.", meaning:"왕이여"},
+    {surface:"vañcemi", lemma:"vañceti", gram:"1.Sg.Pres.", meaning:"속인다"}
+  ]},
+  { pali:"eso mahārāja bhagavā", translation:"대왕이여, 이 분이 세존이십니다.", words:[
+    {surface:"eso", lemma:"esa/eta", gram:"N.Sg.m.pron.", meaning:"이 사람은, 이 분이"},
+    {surface:"mahārāja", lemma:"mahārāja", gram:"V.Sg.m.", meaning:"대왕이여 (복합어: mahā+rāja)"},
+    {surface:"bhagavā", lemma:"bhagavant", gram:"N.Sg.m.", meaning:"세존이"}
+  ]},
+  { pali:"mayaṃ bhagavantaṃ upasaṃkamimhā", translation:"우리는 세존께 다가갔다.", words:[
+    {surface:"mayaṃ", lemma:"ahaṃ", gram:"N.Pl.1.pron.", meaning:"우리는"},
+    {surface:"bhagavantaṃ", lemma:"bhagavant", gram:"Ac.Sg.m.", meaning:"세존께"},
+    {surface:"upasaṃkamimhā", lemma:"upasaṃkamati", gram:"1.Pl.Aor.", meaning:"다가갔다"}
+  ]},
+  { pali:"atthi kāyo", translation:"몸이 있다.", words:[
+    {surface:"atthi", lemma:"atthi", gram:"3.Sg.Pres.", meaning:"이다, 있다"},
+    {surface:"kāyo", lemma:"kāya", gram:"N.Sg.m.", meaning:"몸, 육신이"}
+  ]},
+  { pali:"upeti pi apeti pi", translation:"오기도 하고 가기도 한다.", words:[
+    {surface:"upeti", lemma:"upeti", gram:"3.Sg.Pres.", meaning:"온다, 다가온다"},
+    {surface:"pi", lemma:"pi", gram:"avv.", meaning:"또한, -도"},
+    {surface:"apeti", lemma:"apeti", gram:"3.Sg.Pres.", meaning:"간다, 떠나간다"},
+    {surface:"pi", lemma:"pi", gram:"avv.", meaning:"또한, -도"}
+  ]}
+];
+
+function classify(gram) {
+  if (/pron/.test(gram)) return 'pron';
+  if (/Pres|Aor|Impv|Opt|Fut/.test(gram)) return 'verb';
+  if (/^(N|Ac|D|G|Ins|Abl|L|V)\./.test(gram)) return 'noun';
+  return 'particle';
+}
+const posLabel = { noun: '명사', verb: '동사', pron: '대명사', particle: '불변화사' };
+
+function cleanMeaning(meaning, pos) {
+  if (pos !== 'noun' && pos !== 'pron') return meaning;
+  let m = meaning.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  const particles = ['께서는','께서','으로는','에게는','에서는','이여','여','께','에게','에서','으로','로써','로','의','은','는','이','가','을','를'];
+  for (const p of particles) {
+    if (m.endsWith(p) && m.length > p.length + 1) { m = m.slice(0, -p.length); break; }
+  }
+  return m;
+}
+
+const lemmaMap = new Map();
+sentences.forEach((s, si) => {
+  s.words.forEach(w => {
+    const pos = classify(w.gram);
+    if (!lemmaMap.has(w.lemma)) {
+      lemmaMap.set(w.lemma, { lemma: w.lemma, pos, meaning: cleanMeaning(w.meaning, pos), forms: [], sentenceIdx: new Set() });
+    }
+    const e = lemmaMap.get(w.lemma);
+    e.sentenceIdx.add(si);
+    if (!e.forms.some(f => f.surface === w.surface && f.gram === w.gram)) {
+      e.forms.push({ surface: w.surface, gram: w.gram, meaning: w.meaning });
+    }
+  });
+});
+const vocabList = [...lemmaMap.values()];
+const declensionList = vocabList.filter(v => v.forms.length >= 2 && v.pos !== 'particle');
+const allGramCodes = [...new Set(sentences.flatMap(s => s.words.map(w => w.gram)))];
+const gramPoolByPos = {
+  noun: allGramCodes.filter(g => classify(g) === 'noun'),
+  verb: allGramCodes.filter(g => classify(g) === 'verb'),
+  pron: allGramCodes.filter(g => classify(g) === 'pron')
+};
+const allSurfaces = [...new Set(sentences.flatMap(s => s.words.map(w => w.surface)))];
+
+function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+let view = 'home';
+let vocabMode = 'study', vocabIdx = 0, vocabFlipped = false, vocabQuiz = null;
+let declMode = 'study', declIdx = 0, declQuiz = null;
+let sentMode = 'study', sentIdx = 0, activeWord = null, translationShown = false, transQuiz = null, composeQuiz = null;
+
+let progress = { known: [], vq: [0,0], dq: [0,0], tq: [0,0], cq: [0,0], sentSeen: [] };
+
+async function loadProgress() {
+  try {
+    const v = localStorage.getItem('pali-ppik-progress');
+    if (v) return { ...progress, ...JSON.parse(v) };
+  } catch (e) {}
+  return progress;
+}
+async function saveProgress() {
+  try { localStorage.setItem('pali-ppik-progress', JSON.stringify(progress)); } catch (e) {}
+}
+
+function goHome() { view = 'home'; render(); }
+function openTrack(t) {
+  view = t;
+  if (t === 'vocab' && vocabMode === 'quiz') buildVocabQuiz();
+  if (t === 'decl') buildDeclQuiz();
+  if (t === 'sent') {
+    if (sentMode === 'trans') buildTransQuiz();
+    if (sentMode === 'compose') buildComposeQuiz();
+  }
+  render();
+}
+
+/* ---------- vocab ---------- */
+function buildVocabQuiz() {
+  const v = vocabList[vocabIdx];
+  const others = vocabList.filter(x => x.lemma !== v.lemma && x.meaning !== v.meaning);
+  const distractors = shuffle(others).slice(0, 3).map(x => x.meaning);
+  vocabQuiz = { options: shuffle([...distractors, v.meaning]), answered: null };
+}
+function setVocabMode(m) {
+  vocabMode = m; vocabFlipped = false;
+  if (m === 'quiz') buildVocabQuiz();
+  render();
+}
+function vocabGo(dir) {
+  const n = vocabIdx + dir;
+  if (n < 0 || n >= vocabList.length) return;
+  vocabIdx = n; vocabFlipped = false;
+  if (vocabMode === 'quiz') buildVocabQuiz();
+  render();
+}
+function flipVocab() { if (vocabMode === 'study') { vocabFlipped = !vocabFlipped; render(); } }
+function toggleKnown() {
+  const l = vocabList[vocabIdx].lemma;
+  const i = progress.known.indexOf(l);
+  if (i === -1) progress.known.push(l); else progress.known.splice(i, 1);
+  render();
+}
+function answerVocab(opt) {
+  if (vocabQuiz.answered) return;
+  vocabQuiz.answered = opt;
+  progress.vq[1] += 1;
+  if (opt === vocabList[vocabIdx].meaning) progress.vq[0] += 1;
+  render();
+}
+
+function renderVocab() {
+  const v = vocabList[vocabIdx];
+  const isKnown = progress.known.includes(v.lemma);
+  let cardHtml;
+  if (vocabMode === 'study') {
+    cardHtml = `
+      <div class="card" onclick="flipVocab()" style="cursor:pointer;">
+        <div class="eyebrow">${v.sentenceIdx.size}개 문장에서 등장</div>
+        <div class="pos-tag">${posLabel[v.pos]}</div>
+        <div class="lemma">${v.lemma}</div>
+        <div class="meaning-reveal">${vocabFlipped ? v.meaning : ''}</div>
+        <div class="tap-hint">${vocabFlipped ? '' : '눌러서 뜻 보기'}</div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:14px;">
+        <button class="known-btn ${isKnown ? 'marked' : ''}" onclick="toggleKnown()">${isKnown ? '✓ 아는 단어' : '아는 단어로 표시'}</button>
+      </div>
+    `;
+  } else {
+    const opts = vocabQuiz.options.map(opt => {
+      let cls = 'option-btn';
+      if (vocabQuiz.answered) {
+        if (opt === v.meaning) cls += ' correct';
+        else if (opt === vocabQuiz.answered) cls += ' wrong';
+      }
+      return `<button class="${cls}" ${vocabQuiz.answered ? 'disabled' : ''} onclick="answerVocab('${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+    }).join('');
+    cardHtml = `
+      <div class="card">
+        <div class="pos-tag">${posLabel[v.pos]}</div>
+        <div class="lemma">${v.lemma}</div>
+        <div class="detail-panel">
+          <div class="quiz-question">이 단어의 뜻은?</div>
+          <div class="options">${opts}</div>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="mode-switch">
+      <button class="mode-btn ${vocabMode === 'study' ? 'active' : ''}" onclick="setVocabMode('study')">단어 학습</button>
+      <button class="mode-btn ${vocabMode === 'quiz' ? 'active' : ''}" onclick="setVocabMode('quiz')">단어 퀴즈</button>
+    </div>
+    ${cardHtml}
+    <div class="controls">
+      <button class="nav-btn" ${vocabIdx === 0 ? 'disabled' : ''} onclick="vocabGo(-1)">← 이전</button>
+      <div class="progress">${vocabIdx + 1} / ${vocabList.length}</div>
+      <button class="nav-btn" ${vocabIdx === vocabList.length - 1 ? 'disabled' : ''} onclick="vocabGo(1)">다음 →</button>
+    </div>
+    <div class="footer-stat">
+      암기 완료 <span>${progress.known.length} / ${vocabList.length}</span>
+      ${progress.vq[1] > 0 ? ` · 퀴즈 정답 <span>${progress.vq[0]} / ${progress.vq[1]}</span>` : ''}
+    </div>
+  `;
+}
+
+/* ---------- declension ---------- */
+function buildDeclQuiz() {
+  const item = declensionList[declIdx];
+  const form = item.forms[Math.floor(Math.random() * item.forms.length)];
+  const pool = gramPoolByPos[item.pos] || allGramCodes;
+  const distractors = shuffle(pool.filter(g => g !== form.gram)).slice(0, 3);
+  declQuiz = { form, options: shuffle([...distractors, form.gram]), answered: null };
+}
+function setDeclMode(m) { declMode = m; buildDeclQuiz(); render(); }
+function declGo(dir) {
+  const n = declIdx + dir;
+  if (n < 0 || n >= declensionList.length) return;
+  declIdx = n; buildDeclQuiz(); render();
+}
+function answerDecl(opt) {
+  if (declQuiz.answered) return;
+  declQuiz.answered = opt;
+  progress.dq[1] += 1;
+  if (opt === declQuiz.form.gram) progress.dq[0] += 1;
+  render();
+}
+
+function renderDecl() {
+  const item = declensionList[declIdx];
+  let cardHtml;
+  if (declMode === 'study') {
+    const rows = item.forms.map(f => `
+      <tr><td class="f-surface">${f.surface}</td><td class="f-gram">${f.gram}</td><td class="f-meaning">${f.meaning}</td></tr>
+    `).join('');
+    cardHtml = `
+      <div class="card">
+        <div class="pos-tag">${posLabel[item.pos]}</div>
+        <div class="lemma" style="font-size:26px;">${item.lemma}</div>
+        <div class="meaning-reveal" style="font-size:15px;">${item.meaning}</div>
+        <div class="eyebrow" style="margin:18px 0 4px;">문장 속에서 만난 형태들</div>
+        <table class="forms-table">${rows}</table>
+      </div>
+    `;
+  } else {
+    const opts = declQuiz.options.map(opt => {
+      let cls = 'option-btn';
+      if (declQuiz.answered) {
+        if (opt === declQuiz.form.gram) cls += ' correct';
+        else if (opt === declQuiz.answered) cls += ' wrong';
+      }
+      return `<button class="${cls}" ${declQuiz.answered ? 'disabled' : ''} onclick="answerDecl('${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+    }).join('');
+    cardHtml = `
+      <div class="card">
+        <div class="pos-tag">${posLabel[item.pos]}</div>
+        <div class="lemma" style="font-size:26px;">${declQuiz.form.surface}</div>
+        <div class="meaning-reveal" style="font-size:15px;">원형: ${item.lemma} · ${item.meaning}</div>
+        <div class="detail-panel">
+          <div class="quiz-question">이 형태는 어떤 격/활용일까요?</div>
+          <div class="options">${opts}</div>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="mode-switch">
+      <button class="mode-btn ${declMode === 'study' ? 'active' : ''}" onclick="setDeclMode('study')">격변화 학습</button>
+      <button class="mode-btn ${declMode === 'quiz' ? 'active' : ''}" onclick="setDeclMode('quiz')">격변화 퀴즈</button>
+    </div>
+    ${cardHtml}
+    <div class="controls">
+      <button class="nav-btn" ${declIdx === 0 ? 'disabled' : ''} onclick="declGo(-1)">← 이전</button>
+      <div class="progress">${declIdx + 1} / ${declensionList.length}</div>
+      <button class="nav-btn" ${declIdx === declensionList.length - 1 ? 'disabled' : ''} onclick="declGo(1)">다음 →</button>
+    </div>
+    <div class="footer-stat">${progress.dq[1] > 0 ? `퀴즈 정답 <span>${progress.dq[0]} / ${progress.dq[1]}</span>` : '두 가지 이상 형태로 등장한 단어만 모았어요'}</div>
+  `;
+}
+
+/* ---------- sentence ---------- */
+function buildTransQuiz() {
+  const s = sentences[sentIdx];
+  const others = sentences.filter((x, i) => i !== sentIdx && x.translation !== s.translation);
+  const distractors = shuffle(others).slice(0, 3).map(x => x.translation);
+  transQuiz = { options: shuffle([...distractors, s.translation]), answered: null };
+}
+function buildComposeQuiz() {
+  const s = sentences[sentIdx];
+  const candidates = s.words.map((w, i) => ({ w, i })).filter(x => classify(x.w.gram) !== 'particle');
+  const pick = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : { w: s.words[0], i: 0 };
+  const target = pick.w;
+  const entry = lemmaMap.get(target.lemma);
+  let distractors = entry.forms.filter(f => f.surface !== target.surface).map(f => f.surface);
+  if (entry.pos === 'noun' || entry.pos === 'verb') {
+    const stem = target.lemma;
+    const fake = [];
+    if (entry.pos === 'noun' && /a$/.test(stem)) {
+      ['o','aṃ','ā','e'].forEach(end => {
+        const cand = stem.slice(0, -1) + end;
+        if (cand !== target.surface && !distractors.includes(cand)) fake.push(cand);
+      });
+    }
+    distractors = [...distractors, ...fake];
+  }
+  if (distractors.length < 3) {
+    const pool = allSurfaces.filter(x => x !== target.surface && !distractors.includes(x));
+    distractors = [...distractors, ...shuffle(pool)];
+  }
+  distractors = [...new Set(distractors)].slice(0, 3);
+  composeQuiz = { wordIndex: pick.i, options: shuffle([...distractors, target.surface]), answered: null };
+}
+function setSentMode(m) {
+  sentMode = m; activeWord = null; translationShown = false;
+  if (m === 'trans') buildTransQuiz();
+  if (m === 'compose') buildComposeQuiz();
+  render();
+}
+function showWord(i) { activeWord = (activeWord === i) ? null : i; render(); }
+function toggleTranslation() { translationShown = !translationShown; render(); }
+function answerTrans(idx) {
+  if (transQuiz.answered !== null) return;
+  transQuiz.answered = idx;
+  progress.tq[1] += 1;
+  if (transQuiz.options[idx] === sentences[sentIdx].translation) progress.tq[0] += 1;
+  render();
+}
+function answerCompose(opt) {
+  if (composeQuiz.answered) return;
+  composeQuiz.answered = opt;
+  progress.cq[1] += 1;
+  const target = sentences[sentIdx].words[composeQuiz.wordIndex];
+  if (opt === target.surface) progress.cq[0] += 1;
+  render();
+}
+function sentGo(dir) {
+  const n = sentIdx + dir;
+  if (n < 0 || n >= sentences.length) return;
+  sentIdx = n; activeWord = null; translationShown = false;
+  if (sentMode === 'trans') buildTransQuiz();
+  if (sentMode === 'compose') buildComposeQuiz();
+  render();
+}
+
+function renderSent() {
+  const s = sentences[sentIdx];
+  if (!progress.sentSeen.includes(sentIdx)) progress.sentSeen.push(sentIdx);
+  let cardHtml;
+
+  if (sentMode === 'study') {
+    const paliHtml = s.words.map((w, i) => {
+      const cls = activeWord === i ? 'word active' : 'word';
+      return `<span class="${cls}" onclick="showWord(${i})">${w.surface}</span>`;
+    }).join(' ');
+    let detailHtml = '<div class="detail-empty">단어를 눌러 원형과 격변화를 확인하세요.</div>';
+    if (activeWord !== null) {
+      const w = s.words[activeWord];
+      detailHtml = `
+        <div class="detail-row"><span class="detail-label">원형</span><span class="detail-lemma">${w.lemma}</span></div>
+        <div class="detail-row"><span class="detail-label">형태</span><span class="detail-gram">${w.gram}</span></div>
+        <div class="detail-row"><span class="detail-label">의미</span><span class="detail-meaning">${w.meaning}</span></div>
+      `;
+    }
+    cardHtml = `
+      <div class="card">
+        <div class="eyebrow">초급강독 · ${sentIdx + 1}번 문장</div>
+        <div class="pali-sentence">${paliHtml}</div>
+        <div class="detail-panel">${detailHtml}</div>
+        <div class="translation-toggle" onclick="toggleTranslation()">${translationShown ? '번역 숨기기' : '번역 보기'}</div>
+        <div class="translation-text ${translationShown ? 'show' : ''}">${s.translation}</div>
+      </div>
+    `;
+  } else if (sentMode === 'trans') {
+    const opts = transQuiz.options.map((opt, i) => {
+      let cls = 'option-btn';
+      if (transQuiz.answered !== null) {
+        if (opt === s.translation) cls += ' correct';
+        else if (i === transQuiz.answered) cls += ' wrong';
+      }
+      return `<button class="${cls}" ${transQuiz.answered !== null ? 'disabled' : ''} onclick="answerTrans(${i})">${opt}</button>`;
+    }).join('');
+    cardHtml = `
+      <div class="card">
+        <div class="eyebrow">해석 퀴즈 · ${sentIdx + 1}번 문장</div>
+        <div class="pali-sentence">${s.pali}</div>
+        <div class="detail-panel">
+          <div class="quiz-question">이 문장의 올바른 해석은?</div>
+          <div class="options single-col">${opts}</div>
+        </div>
+      </div>
+    `;
+  } else {
+    const target = s.words[composeQuiz.wordIndex];
+    const paliHtml = s.words.map((w, i) => {
+      if (i === composeQuiz.wordIndex) {
+        return `<span class="blank-slot">${composeQuiz.answered ? target.surface : '＿＿＿＿'}</span>`;
+      }
+      return `<span>${w.surface}</span>`;
+    }).join(' ');
+    const opts = composeQuiz.options.map(opt => {
+      let cls = 'option-btn pali-opt';
+      if (composeQuiz.answered) {
+        if (opt === target.surface) cls += ' correct';
+        else if (opt === composeQuiz.answered) cls += ' wrong';
+      }
+      return `<button class="${cls}" ${composeQuiz.answered ? 'disabled' : ''} onclick="answerCompose('${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+    }).join('');
+    cardHtml = `
+      <div class="card">
+        <div class="eyebrow">작문 퀴즈 · ${sentIdx + 1}번 문장</div>
+        <div class="korean-prompt">${s.translation}</div>
+        <div class="pali-sentence" style="font-size:21px;">${paliHtml}</div>
+        <div class="detail-panel">
+          <div class="quiz-question">빈칸에 들어갈 올바른 형태는? <b>(원형: ${target.lemma})</b></div>
+          <div class="options">${opts}</div>
+          <div class="quiz-explain ${composeQuiz.answered ? 'show' : ''}"><b>${target.surface}</b> = ${target.gram} · ${target.meaning}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="mode-switch">
+      <button class="mode-btn ${sentMode === 'study' ? 'active' : ''}" onclick="setSentMode('study')">해석 학습</button>
+      <button class="mode-btn ${sentMode === 'trans' ? 'active' : ''}" onclick="setSentMode('trans')">해석 퀴즈</button>
+      <button class="mode-btn ${sentMode === 'compose' ? 'active' : ''}" onclick="setSentMode('compose')">작문 퀴즈</button>
+    </div>
+    ${cardHtml}
+    <div class="controls">
+      <button class="nav-btn" ${sentIdx === 0 ? 'disabled' : ''} onclick="sentGo(-1)">← 이전</button>
+      <div class="progress">${sentIdx + 1} / ${sentences.length}</div>
+      <button class="nav-btn" ${sentIdx === sentences.length - 1 ? 'disabled' : ''} onclick="sentGo(1)">다음 →</button>
+    </div>
+    <div class="footer-stat">
+      둘러본 문장 <span>${progress.sentSeen.length} / ${sentences.length}</span>
+      ${progress.tq[1] > 0 ? ` · 해석 <span>${progress.tq[0]}/${progress.tq[1]}</span>` : ''}
+      ${progress.cq[1] > 0 ? ` · 작문 <span>${progress.cq[0]}/${progress.cq[1]}</span>` : ''}
+    </div>
+  `;
+}
+
+/* ---------- home ---------- */
+function renderHome() {
+  return `
+    <div class="home-tracks">
+      <div class="track-card" onclick="openTrack('vocab')">
+        <div class="track-num">i</div>
+        <div class="track-info">
+          <div class="track-name">단어</div>
+          <div class="track-desc">원형(사전형)과 뜻을 익힙니다. 총 ${vocabList.length}개 어휘.</div>
+          <div class="track-flow">단어 학습 → 단어 퀴즈</div>
+        </div>
+        <div class="track-stat">${progress.known.length}/${vocabList.length}<br>암기</div>
+      </div>
+      <div class="track-card" onclick="openTrack('decl')">
+        <div class="track-num">ii</div>
+        <div class="track-info">
+          <div class="track-name">격변화</div>
+          <div class="track-desc">같은 단어가 문장 속에서 어떻게 모습을 바꾸는지 익힙니다.</div>
+          <div class="track-flow">격변화 학습 → 격변화 퀴즈</div>
+        </div>
+        <div class="track-stat">${progress.dq[1] > 0 ? Math.round(progress.dq[0]/progress.dq[1]*100)+'%' : '—'}<br>정답률</div>
+      </div>
+      <div class="track-card" onclick="openTrack('sent')">
+        <div class="track-num">iii</div>
+        <div class="track-info">
+          <div class="track-name">문장</div>
+          <div class="track-desc">초급강독 ${sentences.length}문장을 읽고, 해석하고, 직접 채워봅니다.</div>
+          <div class="track-flow">해석 학습 → 해석 퀴즈 → 작문 퀴즈</div>
+        </div>
+        <div class="track-stat">${progress.sentSeen.length}/${sentences.length}<br>둘러봄</div>
+      </div>
+    </div>
+  `;
+}
+
+const viewTitle = { home: '', vocab: '단어', decl: '격변화', sent: '문장' };
+
+function render() {
+  const isHome = view === 'home';
+  document.getElementById('app').innerHTML = `
+    <div class="header">
+      <div class="title-row">
+        ${isHome ? '' : '<button class="back-btn" onclick="goHome()">←</button>'}
+        <div>
+          <h1>빠알리어 빨리 익히기${isHome ? '' : ' · ' + viewTitle[view]}</h1>
+          ${isHome ? '<p>오늘은 어떤 학습을 할까요?</p>' : ''}
+          <p class="source-tag">정준영, 「빠알리어 문법·강독」 4장 초급강독 기반</p>
+        </div>
+      </div>
+    </div>
+    ${isHome ? '' : '<div class="leaf-thread"><span class="dot"></span></div>'}
+    ${isHome ? renderHome() : (view === 'vocab' ? renderVocab() : view === 'decl' ? renderDecl() : renderSent())}
+  `;
+  saveProgress();
+}
+
+(async function init() {
+  progress = await loadProgress();
+  render();
+})();
+</script>
+</body>
+</html>
